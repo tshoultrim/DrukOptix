@@ -1,176 +1,94 @@
-<<<<<<< HEAD
-# DrukOptix — AI for Optical Excellence
+# Vision AI Hub — Complete Vision AI Solutions
 
-Modern corporate website for DrukOptix, an AI solutions company for the optical
-and vision care industry.
+Modern corporate website built with TanStack Start, Tailwind CSS v4, and Supabase. Ready for Cloudflare Workers/Pages, GitHub Pages, Vercel/Netlify.
 
-## Tech stack
+[![TanStack Start](https://img.shields.io/badge/TanStack%20Start-v1.0-blue?logo=react&logoColor=white)](https://tanstack.com/start/latest)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-v4-38bdf8?logo=tailwindcss)](https://tailwindcss.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-FF5F00?logo=supabase&logoColor=white)](https://supabase.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm](https://img.shields.io/badge/npm-%3E%3D20-green?logo=npm)](https://nodejs.org/)
 
-- **Framework:** TanStack Start v1 (React 19 + Vite 7, file-based routing, SSR)
-- **Styling:** Tailwind CSS v4 + shadcn/ui, Inter font, custom blue/white design tokens
-- **Animations:** Framer Motion (subtle fade-ins)
-- **Forms:** react-hook-form + Zod validation
-- **Backend:** Supabase (Postgres + Auth + RLS)
-- **Auth:** Email/password + Google OAuth
-- **Deploy target:** Cloudflare Workers (via Wrangler)
+## 🚀 Quick Start
 
-> Note: this project was originally specced for Next.js + Prisma + SQLite +
-> NextAuth. It was rebuilt on TanStack Start + Supabase so the same site runs
-> on edge infrastructure with no local DB to manage. Functionality is identical.
+### Prerequisites
+- [Node.js](https://nodejs.org/) ≥ 20 or [Bun](https://bun.sh/) ≥ 1.1
+- Free [Supabase](https://supabase.com/) project
 
-## Pages
-
-| Route        | Description                                                     |
-|--------------|-----------------------------------------------------------------|
-| `/`          | Hero, services, about snippet, stats                            |
-| `/services`  | Detailed service descriptions                                   |
-| `/about`     | Mission, team, project abstract                                 |
-| `/contact`   | Validated form → saved to `contact_submissions`                 |
-| `/login`     | Email + password / Google OAuth                                 |
-| `/register`  | Account creation                                                |
-| `/dashboard` | Protected. Admins see all contact submissions.                  |
-| `/privacy`   | Placeholder privacy policy                                      |
-| `/terms`     | Placeholder terms of service                                    |
-
-## Database schema
-
-All tables are managed via SQL migrations in `supabase/migrations/`.
-
-- **`profiles`** — `id (uuid, FK to auth.users)`, `email`, `full_name`, `created_at`. Auto-created on signup.
-- **`user_roles`** — `id`, `user_id`, `role` (`'admin' | 'user'`), `created_at`. Roles live in their own table (security best practice — never on profiles).
-- **`contact_submissions`** — `id`, `name`, `email`, `company?`, `message`, `created_at`.
-
-Row-Level Security:
-- Anyone can submit the contact form (length-validated at the DB layer).
-- Only admins can read submissions.
-- Users can read/update their own profile; admins can read all.
-- Only admins can mutate `user_roles`.
-
-A `has_role(uuid, app_role)` SECURITY DEFINER function is used inside RLS to
-prevent recursive policy errors.
-
----
-
-## Run locally
-
-### 1. Prerequisites
-
-- [Bun](https://bun.sh) ≥ 1.1 (or Node ≥ 20 + npm)
-- A Supabase project (free tier is fine). You can either:
-  - **Reuse the Lovable Cloud project** that's already provisioned for this app
-    (recommended — schema, RLS, and auth are already set up), or
-  - **Create your own** Supabase project and run the SQL migrations from
-    `supabase/migrations/` in order via the Supabase SQL editor.
-
-### 2. Install
-
+### 1. Clone & Install
 ```bash
-bun install
-# or: npm install
+git clone YOUR_GITHUB_REPO_URL vision-ai-hub
+cd vision-ai-hub
+npm ci
 ```
 
-### 3. Configure environment
-
-Copy `.env.example` to `.env` and fill in your Supabase credentials:
-
+### 2. Setup Environment
 ```bash
 cp .env.example .env
+# Fill SUPABASE_URL & SUPABASE_ANON_KEY from Supabase dashboard → Settings → API
 ```
 
-Where to get the values:
-- **Lovable Cloud users:** open the Cloud panel in Lovable → Settings → API, or
-  open the linked Supabase dashboard → Project Settings → API.
-- **Self-hosted Supabase users:** Project Settings → API → "Project URL" and
-  "anon public" key.
+Apply migrations: Copy/paste `supabase/migrations/*.sql` into Supabase SQL editor (in order).
 
-Both `VITE_*` and unprefixed variants must be set — the `VITE_*` ones are
-inlined into the browser bundle by Vite, the unprefixed ones are read by the
-SSR server.
-
-### 4. (If using your own Supabase project) Apply the schema
-
-In the Supabase SQL editor, run the files inside `supabase/migrations/` in
-chronological order. They create the enum, tables, RLS policies, and the
-`handle_new_user` trigger that auto-creates a profile on signup.
-
-### 5. Configure auth providers
-
-In Supabase → Authentication → Providers:
-- **Email**: enabled by default. For faster local testing, disable
-  "Confirm email" so signups log in immediately.
-- **Google** (optional): turn it on. Lovable Cloud manages the OAuth client
-  for you; on a self-hosted Supabase you'll need a Google Cloud OAuth client
-  with redirect URI `https://<project-ref>.supabase.co/auth/v1/callback`.
-
-In Authentication → URL Configuration, add `http://localhost:3000` to the
-**Site URL** and **Redirect URLs** so OAuth callbacks resolve locally.
-
-### 6. Start the dev server
-
+### 3. Run Locally
 ```bash
-bun run dev
-# or: npm run dev
+npm run dev
 ```
+Visit `http://localhost:3000`.
 
-Open <http://localhost:3000>.
+**Admin setup**: Register → Insert into `user_roles` table (see docs below).
 
-### 7. Make yourself admin
-
-Sign up at `/register`, then in the Supabase SQL editor run:
-
-```sql
-insert into public.user_roles (user_id, role)
-values ('<paste-your-user-id-here>', 'admin')
-on conflict do nothing;
-```
-
-(Find your user id under Authentication → Users.) Refresh `/dashboard` — you'll
-now see all contact submissions.
-
-### 8. Production build
-
+### 4. Build & Deploy
 ```bash
-bun run build     # outputs to .output/
-bun run start     # runs the built server
+npm run build  # Outputs to .output/ or dist/
+npm run preview
 ```
+- **GitHub Pages**: `npm run deploy`
+- **Cloudflare Pages/Workers**: `npx wrangler pages deploy .output/` or `wrangler deploy`
+- **Vercel/Netlify**: Upload `dist/` or `.output/`
 
-Deploy with Wrangler (`wrangler.jsonc` is included) or any Node host that can
-run the built server.
+## 🌐 Features
 
-## Project structure
+| Route | Description |
+|-------|-------------|
+| `/` | Hero + services + stats |
+| `/services`, `/about`, `/teams` | Content pages |
+| `/contact` | Form → Supabase |
+| `/login` / `/register` | Supabase Auth |
+| `/dashboard` | Admin view (protected) |
+| `/privacy` / `/terms` | Legal |
 
+## 📊 Tech Stack
+- **Frontend**: React 19 + TanStack Router/Start (SSR) + Vite 7 + TypeScript
+- **UI**: shadcn/ui + Tailwind v4 + Framer Motion
+- **Backend**: Supabase (Auth, Postgres, RLS)
+- **Data**: TanStack Query
+
+## 🗄️ Database Schema (Supabase)
+Tables in `supabase/migrations/`:
+- `profiles`, `user_roles`, `contact_submissions`
+- Full RLS (admin-only reads)
+
+## 📁 Structure
 ```
 src/
-  routes/                 # File-based routing (TanStack Router)
-    __root.tsx            # Root layout (Navbar + Footer + Toaster)
-    index.tsx             # Home
-    about.tsx
-    services.tsx
-    contact.tsx
-    login.tsx
-    register.tsx
-    dashboard.tsx         # Protected (admin-only data)
-    privacy.tsx
-    terms.tsx
-  components/
-    site/                 # Navbar, Footer, Container, FadeIn
-    ui/                   # shadcn/ui components
-  integrations/supabase/  # Auto-generated Supabase client + types
-  lib/
-    auth.ts               # useAuth() hook (session + isAdmin)
-    utils.ts
-  styles.css              # Tailwind + design tokens (oklch)
-  router.tsx              # createRouter() factory
-supabase/
-  migrations/             # SQL schema migrations (run in order)
+├── routes/          # File-based routing
+├── components/ui/   # shadcn
+├── components/site/ # Custom
+├── lib/auth.ts      # Hooks
+└── integrations/supabase/
 ```
 
-## Future-ready notes
+## Original Setup Notes (DrukOptix Reference)
+*(Adapted from Loveable AI generation)*
+- Detailed local setup in merged sections above.
+- Make admin: `INSERT INTO user_roles (user_id, role) VALUES ('uuid', 'admin');`
 
-The architecture is intentionally modular so an "AI Demo Playground" can be
-added later as a new route under `src/routes/` (e.g. `playground.tsx`) backed
-by a `createServerFn` handler that calls the Lovable AI Gateway.
-=======
-# DrukOptix
-Corporate web site  
->>>>>>> cbfa70f888ad1893c169053c725d3e369e8be9a8
+## 🤝 Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## 📄 License
+MIT — see [LICENSE](LICENSE).
+
+## 🙌 Credits
+Built with ❤️ using TanStack Start, shadcn/ui, Supabase. Originally generated via Loveable AI.
+

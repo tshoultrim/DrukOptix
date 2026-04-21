@@ -7,6 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Lockfiles (use npm for consistency)
+bun.lockb
+bun.lockb
+
 node_modules
 dist
 dist-ssr
@@ -15,6 +19,11 @@ dist-ssr
 .tanstack/**
 .nitro
 *.local
+
+# Env & Secrets
+.env
+.env.local
+.env.*.local
 
 # Wrangler / Cloudflare
 .wrangler/
