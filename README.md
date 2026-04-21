@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # DrukOptix — AI for Optical Excellence
 
 Modern corporate website for DrukOptix, an AI solutions company for the optical
@@ -169,3 +170,7 @@ supabase/
 The architecture is intentionally modular so an "AI Demo Playground" can be
 added later as a new route under `src/routes/` (e.g. `playground.tsx`) backed
 by a `createServerFn` handler that calls the Lovable AI Gateway.
+=======
+# DrukOptix
+Corporate web site  
+>>>>>>> cbfa70f888ad1893c169053c725d3e369e8be9a8
