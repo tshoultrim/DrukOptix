@@ -4,7 +4,7 @@
   "private": false,
   "sideEffects": false,
   "type": "module",
-  "homepage": "https://vision-ai-hub.netlify.app",
+"homepage":"https://tshoultrim.github.io/DrukOptix"
   "repository": {
     "type": "git",
     "url": "https://github.com/YOUR_USERNAME/vision-ai-hub"
