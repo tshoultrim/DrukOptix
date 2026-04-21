@@ -4,10 +4,10 @@
   "private": false,
   "sideEffects": false,
   "type": "module",
-"homepage":"https://tshoultrim.github.io/DrukOptix"
+  "homepage": "https://tshoultrim.github.io/DrukOptix",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/vision-ai-hub"
+    "url": "https://github.com/tshoultrim/DrukOptix"
   },
   "license": "MIT",
   "scripts": {
