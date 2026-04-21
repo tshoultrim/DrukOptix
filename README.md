@@ -83,12 +83,5 @@ src/
 - Detailed local setup in merged sections above.
 - Make admin: `INSERT INTO user_roles (user_id, role) VALUES ('uuid', 'admin');`
 
-## 🤝 Contributing
-See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## 📄 License
-MIT — see [LICENSE](LICENSE).
-
-## 🙌 Credits
-Built with ❤️ using TanStack Start, shadcn/ui, Supabase. Originally generated via Loveable AI.
 
